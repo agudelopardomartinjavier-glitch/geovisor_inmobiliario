@@ -35,4 +35,10 @@ SRID_TRABAJO = 9377
 ADMIN_ENABLED = os.environ.get("ADMIN_ENABLED", "false").lower() in ("1", "true", "yes")
 ADMIN_DB = _ruta(os.environ.get("ADMIN_DB", "data/db/admin.sqlite"))
 ADMIN_SECRET = os.environ.get("ADMIN_SECRET", "")
-ADMIN_TOKEN_HORAS = float(os.environ.get("ADMIN_TOKEN_HORAS", "12"))
+SOPORTES_DIR = _ruta(os.environ.get("SOPORTES_DIR", "data/soportes"))   # PRIVADO: jamás se monta como estático
+ADMIN_TOKEN_HORAS =float(os.environ.get("ADMIN_TOKEN_HORAS", "12"))
+
+# --- Contabilidad (Fase 3): datos del emisor de las facturas y proveedor de facturación electrónica
+EMPRESA_NOMBRE = os.environ.get("EMPRESA_NOMBRE", "")
+EMPRESA_NIT = os.environ.get("EMPRESA_NIT", "")
+DIAN_PROVEEDOR = os.environ.get("DIAN_PROVEEDOR", "ninguno")   # ninguno | simulado | <adaptador registrado en app/contable/dian.py>

@@ -9,3 +9,8 @@ tools/node/
 data/*.gpkg
 data/db/*.gpkg
 .claude/settings.local.json
+data/db/admin.sqlite
+data/db/respaldo_antes_demo.sqlite
+data/db/respaldos/
+data/soportes/
+.pytest_cache/

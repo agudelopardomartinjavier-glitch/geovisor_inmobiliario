@@ -16,6 +16,21 @@ inmuebles_publicos = Table(
     Column("x", Float), Column("y", Float),
 )
 
+inmueble_ficha_publica = Table(
+    "inmueble_ficha_publica", metadata,
+    Column("inmueble_id", Integer, primary_key=True),
+    Column("estrato", Integer), Column("antiguedad_anos", Integer), Column("estado_conservacion", String),
+    Column("pisos", Integer), Column("parqueaderos", Integer), Column("deposito", Integer),
+    Column("acabados", String), Column("orientacion", String),
+    Column("agua", Integer), Column("alcantarillado", Integer), Column("gas", Integer), Column("energia", Integer), Column("internet", Integer),
+    Column("fuentes_agua", String), Column("tipo_suelo", String), Column("vocacion", String), Column("cultivos", String),
+    Column("mejoras", String), Column("via_acceso", String),
+    Column("video_url", String), Column("recorrido_360_url", String), Column("plano_url", String),
+    Column("negociable", Integer), Column("permuta", Integer), Column("financiacion", Integer),
+    Column("administracion_mensual", Integer), Column("disponible_desde", String),
+    Column("entorno", Text), Column("semaforo_color", String), Column("semaforo_resumen", Text),
+)
+
 predios = Table(
     "predios", metadata,
     Column("id", Integer, primary_key=True),

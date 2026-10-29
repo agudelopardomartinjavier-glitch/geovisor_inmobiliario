@@ -1,19 +1,25 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { MapRef } from 'react-map-gl/maplibre'
 import { getCapas } from '../lib/api'
+import type { Tipo } from '../lib/types'
 import { fmtCOP, fmtNum } from '../lib/mapa'
 import { useDebounce } from '../lib/useDebounce'
 import {
   cambiarEstado, crear, crearComparable, editar, editarComparable, eliminar, eliminarComparable,
-  guardarToken, leerToken, listar, listarComparables, me, vinculosDe,
+  guardarToken, leerToken, listar, listarComparables, me, mercadoM2, vinculosDe,
 } from './api'
 import AdminMap from './AdminMap'
 import ComparableForm, { compADatos, compDesde, compVacio, type BorradorComp } from './ComparableForm'
 import InmuebleForm, { aDatos, borradorVacio, desdeInmueble, type Borrador } from './InmuebleForm'
+import CalorControl from './CalorControl'
+import FichaPanel from './FichaPanel'
+import HistorialPanel from './HistorialPanel'
 import Login from './Login'
 import ValoracionPanel from './ValoracionPanel'
 import { COLOR_COMPARABLE, COLOR_ESTADO, type Comparable, type Estado, type InmuebleAdmin } from './tipos'
+
+const ContabilidadApp = lazy(() => import('./contab/ContabilidadApp'))   // se carga solo al abrir «Contabilidad»
 
 type Modo = { tipo: 'lista' } | { tipo: 'form'; id: number | null }
 type Pestana = 'inmuebles' | 'comparables'
@@ -36,6 +42,7 @@ function Panel({ usuario, onSalir }: { usuario: string; onSalir: () => void }) {
   const qc = useQueryClient()
   const mapRef = useRef<MapRef>(null)
   const [pestana, setPestana] = useState<Pestana>('inmuebles')
+  const [vista, setVista] = useState<'mapa' | 'contab'>('mapa')
 
   // --- inmuebles
   const [modo, setModo] = useState<Modo>({ tipo: 'lista' })
@@ -52,6 +59,11 @@ function Panel({ usuario, onSalir }: { usuario: string; onSalir: () => void }) {
   const [tipoComp, setTipoComp] = useState('')
   const [busquedaComp, setBusquedaComp] = useState('')
   const qComp = useDebounce(busquedaComp)
+
+  // --- mapa de calor de valor por m²
+  const [calorActivo, setCalorActivo] = useState(false)
+  const [calorTipo, setCalorTipo] = useState<Tipo>('casa')
+  const calor = useQuery({ queryKey: ['mercado-m2', calorTipo], queryFn: () => mercadoM2(calorTipo), enabled: calorActivo, staleTime: 60_000, retry: false })
 
   const capas = useQuery({ queryKey: ['capas'], queryFn: getCapas })
   const lista = useQuery({ queryKey: ['admin-inmuebles', estadoFiltro, q], queryFn: () => listar(estadoFiltro, q), retry: false })
@@ -75,7 +87,10 @@ function Panel({ usuario, onSalir }: { usuario: string; onSalir: () => void }) {
 
   const guardar = useMutation({
     mutationFn: () => (id ? editar(id, aDatos(borrador)) : crear(aDatos(borrador))),
-    onSuccess: () => { setModo({ tipo: 'lista' }); setError(null); void refrescar() },
+    onSuccess: () => {
+      setModo({ tipo: 'lista' }); setError(null); void refrescar()
+      for (const k of ['historial', 'inversion', 'valoracion', 'mercado-m2', 'f-semaforo']) void qc.invalidateQueries({ queryKey: [k] })
+    },
     onError: (e: Error) => setError(e.message),
   })
   const borrar = useMutation({
@@ -135,11 +150,18 @@ function Panel({ usuario, onSalir }: { usuario: string; onSalir: () => void }) {
       <header className="flex items-center justify-between bg-emerald-800 px-4 py-2 text-white">
         <h1 className="text-sm font-semibold">Administración · Geovisor inmobiliario Acacías</h1>
         <div className="flex items-center gap-3 text-xs">
+          <button type="button" onClick={() => setVista(vista === 'mapa' ? 'contab' : 'mapa')} className="rounded border border-white/40 bg-white/10 px-2 py-1 font-medium">
+            {vista === 'mapa' ? 'Contabilidad' : '← Inmuebles y mapa'}
+          </button>
+          <a href="/" target="_blank" rel="noopener noreferrer" className="rounded border border-white/40 bg-white/10 px-2 py-1 font-medium">Ver visor público ↗</a>
           <span>{usuario}</span>
           <button type="button" onClick={onSalir} className="rounded border border-white/40 px-2 py-1">Salir</button>
         </div>
       </header>
 
+      {vista === 'contab' ? (
+        <Suspense fallback={<div className="p-6 text-sm text-gray-500">Cargando contabilidad…</div>}><ContabilidadApp /></Suspense>
+      ) : (
       <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         <section className="order-2 flex min-h-0 flex-1 flex-col bg-white md:order-1 md:w-[26rem] md:flex-none md:border-r">
           <nav className="flex border-b" aria-label="Secciones">
@@ -160,6 +182,8 @@ function Panel({ usuario, onSalir }: { usuario: string; onSalir: () => void }) {
                     onCancelar={() => setModo({ tipo: 'lista' })}
                     onEliminar={id ? () => borrar.mutateAsync().then(() => undefined, () => undefined) : undefined}
                   />
+                  {id && <FichaPanel inmuebleId={id} tipo={borrador.tipo} />}
+                  {id && <HistorialPanel inmuebleId={id} />}
                   {id ? <ValoracionPanel inmuebleId={id} onNuevoComparable={() => abrirComp(null, true)} /> : (
                     <p className="mt-2 border-t pt-3 text-xs text-gray-500">Guarda el inmueble para valorarlo con comparables.</p>
                   )}
@@ -258,12 +282,14 @@ function Panel({ usuario, onSalir }: { usuario: string; onSalir: () => void }) {
           </div>
         </section>
 
-        <main className="order-1 h-[40vh] md:order-2 md:h-auto md:flex-1">
+        <main className="relative order-1 h-[40vh] md:order-2 md:h-auto md:flex-1">
+          <CalorControl activo={calorActivo} tipo={calorTipo} datos={calor.data} cargando={calor.isFetching} error={calor.isError} onActivo={setCalorActivo} onTipo={setCalorTipo} />
           <AdminMap
             mapRef={mapRef}
             predios={capas.data?.find((c) => c.nombre === 'predios')}
             inmuebles={todos.data ?? []}
             comparables={todosComps.data ?? []}
+            calor={calorActivo ? calor.data?.celdas ?? null : null}
             vinculados={vinculados}
             seleccionado={enInmuebles ? id : null}
             compSeleccionado={enInmuebles ? null : idComp}
@@ -279,6 +305,7 @@ function Panel({ usuario, onSalir }: { usuario: string; onSalir: () => void }) {
           />
         </main>
       </div>
+      )}
     </div>
   )
 }

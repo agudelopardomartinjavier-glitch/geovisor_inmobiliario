@@ -3,6 +3,8 @@ import { Popup } from 'react-map-gl/maplibre'
 import type { InmuebleFeature } from '../lib/types'
 import { COLOR_OPERACION, bonito, fmtCOP, fmtNum } from '../lib/mapa'
 import { urlFoto } from '../lib/api'
+import FichaAmpliada from './FichaAmpliada'
+import { InsigniaSemaforo } from './Semaforo'
 import { enlaceInmueble, enlaceWhatsapp, urlFichaPdf } from '../lib/whatsapp'
 
 interface Props {
@@ -18,10 +20,11 @@ export default function PropertyPopup({ anclaje = 'bottom', inmueble, onClose, o
   const foto = p.fotos[0]
   const wa = enlaceWhatsapp(p)
   const [copiado, setCopiado] = useState(false)
+  const [ficha, setFicha] = useState(false)
 
   return (
     <Popup longitude={lon} latitude={lat} anchor={anclaje} offset={anclaje === 'left' ? 16 : 14} maxWidth="300px" closeOnClick={false} onClose={onClose}>
-      <div className="w-[280px] max-w-[80vw] text-sm">
+      <div className="max-h-[70vh] w-[280px] max-w-[80vw] overflow-y-auto text-sm">
         {foto && <img src={urlFoto(foto)} alt={`${p.tipo} en ${p.operacion}`} className={`${anclaje === 'left' ? 'h-28' : 'h-36'} w-full object-cover`} />}
         <div className="space-y-2 p-3">
           <div className="flex items-center gap-2">
@@ -29,6 +32,7 @@ export default function PropertyPopup({ anclaje = 'bottom', inmueble, onClose, o
               {p.operacion}
             </span>
             <span className="font-semibold capitalize">{p.tipo}</span>
+            {p.semaforo && <span className="ml-auto"><InsigniaSemaforo color={p.semaforo} /></span>}
           </div>
           <div className="text-lg font-bold">{fmtCOP(p.precio)}{p.operacion === 'arriendo' && <span className="text-xs font-medium text-gray-500"> / mes</span>}</div>
           {(p.barrio || p.vereda) && <p className="-mt-1 text-xs text-gray-500">{p.barrio ? `Barrio ${bonito(p.barrio)}` : `Vereda ${p.vereda}`}</p>}
@@ -55,6 +59,10 @@ export default function PropertyPopup({ anclaje = 'bottom', inmueble, onClose, o
               {copiado ? '¡Copiado!' : 'Copiar enlace'}
             </button>
           </div>
+          <button type="button" onClick={() => setFicha((v) => !v)} aria-expanded={ficha} className="w-full rounded-md border border-emerald-700 py-1.5 text-xs font-medium text-emerald-800">
+            {ficha ? 'Ocultar ficha ampliada' : 'Ver ficha ampliada'}
+          </button>
+          {ficha && <FichaAmpliada id={p.id} tipo={p.tipo} esArriendo={p.operacion === 'arriendo'} />}
           {p.numero_predial && (
             <button type="button" onClick={() => onVerPredio(p.numero_predial!)} className="w-full rounded-md bg-emerald-700 py-1.5 text-xs font-medium text-white">
               Ver uso de suelo y restricciones del predio

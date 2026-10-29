@@ -14,6 +14,7 @@ from ..geo import a_4326, a_9377, gpkg_a_shapely
 from ..models.tablas import predios
 from . import auth
 from .db import auditar, conexion, sincronizar_publico
+from .ficha_servicio import recalcular
 from .schemas import EstadoIn, InmuebleAdmin, InmuebleIn, LoginIn, TokenOut
 
 router = APIRouter(prefix="/admin", tags=["admin"])
@@ -107,6 +108,7 @@ def crear(datos: InmuebleIn, usuario: Admin):
         cur = con.execute(f"INSERT INTO inmuebles ({', '.join(CAMPOS)}) VALUES ({', '.join('?' * len(CAMPOS))})", [v[c] for c in CAMPOS])
         nuevo = cur.lastrowid
         auditar(con, usuario, "crear", nuevo, {"estado": datos.estado_publicacion, "numero_predial": datos.numero_predial})
+        recalcular(nuevo, con)   # entorno + semáforo
         r = con.execute("SELECT * FROM inmuebles WHERE id = ?", (nuevo,)).fetchone()
     sincronizar_publico()
     return _salida(r)
@@ -121,6 +123,7 @@ def editar(inmueble_id: int, datos: InmuebleIn, usuario: Admin):
         con.execute(f"UPDATE inmuebles SET {', '.join(c + ' = ?' for c in CAMPOS)} WHERE id = ?", [v[c] for c in CAMPOS] + [inmueble_id])
         cambios = [c for c in CAMPOS if antes[c] != v[c]]
         auditar(con, usuario, "editar", inmueble_id, {"campos": cambios})  # solo nombres de campos, no valores sensibles
+        recalcular(inmueble_id, con, recalcular_entorno=any(c in cambios for c in ("x", "y")))
         r = con.execute("SELECT * FROM inmuebles WHERE id = ?", (inmueble_id,)).fetchone()
     sincronizar_publico()
     return _salida(r)
@@ -145,7 +148,10 @@ def eliminar(inmueble_id: int, usuario: Admin):
         r = con.execute("SELECT numero_predial FROM inmuebles WHERE id = ?", (inmueble_id,)).fetchone()
         if not r:
             raise HTTPException(404, "Inmueble no encontrado")
-        con.execute("DELETE FROM inmuebles WHERE id = ?", (inmueble_id,))
+        try:
+            con.execute("DELETE FROM inmuebles WHERE id = ?", (inmueble_id,))
+        except sqlite3.IntegrityError:
+            raise HTTPException(409, "El inmueble tiene movimientos contables (comisiones, contratos, gastos…): no se puede eliminar. Márcalo como vendido o despublícalo.")
         auditar(con, usuario, "eliminar", inmueble_id, {"numero_predial": r["numero_predial"]})
     sincronizar_publico()
     return Response(status_code=204)

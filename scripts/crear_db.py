@@ -48,11 +48,15 @@ for nombre, geom in con.execute("SELECT table_name, geometry_type_name FROM gpkg
     n = con.execute(f'SELECT count(*) FROM "{nombre}"').fetchone()[0]
     con.execute("INSERT OR REPLACE INTO catalogo_capas VALUES (?,?,?,?)", (nombre, grupo, geom, n))
 con.commit(); con.close()
+import migrar
+migrar.subir("publico")   # tablas añadidas por migración (ficha pública, etc.)
 
 # ---------------------------------------------------------------- admin.sqlite
 a = sqlite3.connect(ADMIN)
 with open(os.path.join(BASE, "db", "01_esquema.sql"), encoding="utf8") as fh:
     a.executescript(fh.read())
+a.commit()
+migrar.subir("admin")     # migraciones versionadas (con respaldo previo de admin.sqlite)
 a.execute("DELETE FROM inmuebles WHERE descripcion LIKE '[PRUEBA]%'")
 
 # 3 inmuebles ficticios sobre predios reales con numero_predial unico

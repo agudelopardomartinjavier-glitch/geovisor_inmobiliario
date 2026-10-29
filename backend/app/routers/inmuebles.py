@@ -8,8 +8,8 @@ from sqlalchemy.engine import Connection
 from ..db import get_conn
 from .. import zonas
 from ..geo import punto_a_lonlat
-from ..models.tablas import inmuebles_publicos as t
-from ..schemas.inmueble import InmuebleCollection, InmuebleFeature, Operacion, Tipo
+from ..models.tablas import inmueble_ficha_publica as fp, inmuebles_publicos as t
+from ..schemas.inmueble import FichaPublica, InmuebleCollection, InmuebleFeature, Operacion, Tipo
 
 router = APIRouter(prefix="/inmuebles", tags=["inmuebles"])
 
@@ -34,7 +34,7 @@ def listar(
     vereda: Annotated[Optional[str], Query(max_length=120, description="Nombre exacto de la vereda (ver /zonas)")] = None,
     limit: Annotated[int, Query(ge=1, le=2000)] = 500,
 ):
-    q = select(t).order_by(t.c.id)
+    q = select(t, fp.c.semaforo_color.label("semaforo")).select_from(t.outerjoin(fp, fp.c.inmueble_id == t.c.id)).order_by(t.c.id)
     if tipo:
         q = q.where(t.c.tipo.in_(tipo))
     if operacion:
@@ -58,10 +58,26 @@ def listar(
 
 @router.get("/{inmueble_id}", response_model=InmuebleFeature, summary="Ficha pública de un inmueble")
 def detalle(inmueble_id: int, conn: Annotated[Connection, Depends(get_conn)]):
-    r = conn.execute(select(t).where(t.c.id == inmueble_id)).first()
+    r = conn.execute(select(t, fp.c.semaforo_color.label("semaforo")).select_from(t.outerjoin(fp, fp.c.inmueble_id == t.c.id)).where(t.c.id == inmueble_id)).first()
     if r is None:
         raise HTTPException(404, "Inmueble no encontrado o no publicado")
     return _feature(r)
+
+_BOOLS = ("deposito", "agua", "alcantarillado", "gas", "energia", "internet", "negociable", "permuta", "financiacion")
+
+@router.get("/{inmueble_id}/ficha", response_model=FichaPublica, summary="Ficha ampliada pública (con semáforo: solo color y resumen)")
+def ficha_ampliada(inmueble_id: int, conn: Annotated[Connection, Depends(get_conn)]):
+    if conn.execute(select(t.c.id).where(t.c.id == inmueble_id)).first() is None:
+        raise HTTPException(404, "Inmueble no encontrado o no publicado")
+    r = conn.execute(select(fp).where(fp.c.inmueble_id == inmueble_id)).first()
+    if r is None:
+        return FichaPublica(inmueble_id=inmueble_id)
+    d = dict(r._mapping)
+    color, resumen = d.pop("semaforo_color"), d.pop("semaforo_resumen")
+    d["entorno"] = json.loads(d.get("entorno") or "{}")
+    for k in _BOOLS:
+        d[k] = None if d[k] is None else bool(d[k])
+    return FichaPublica(**d, semaforo={"color": color, "resumen": resumen} if color else None)
 
 @router.get("/{inmueble_id}/ficha.pdf", summary="Ficha PDF del inmueble (solo datos públicos)", response_class=Response)
 def ficha(inmueble_id: int, conn: Annotated[Connection, Depends(get_conn)]):

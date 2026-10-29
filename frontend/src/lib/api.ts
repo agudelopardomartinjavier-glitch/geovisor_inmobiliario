@@ -1,4 +1,4 @@
-import type { Capa, Filtros, InmuebleCollection, Predio, ZonaDetalle, Zona } from './types'
+import type { Capa, FichaPublica, Filtros, InmuebleCollection, Predio, ZonaDetalle, Zona } from './types'
 
 export const API_URL: string = (import.meta.env.VITE_API_URL ?? 'http://localhost:8000').replace(/\/$/, '')
 
@@ -29,6 +29,8 @@ export function getInmuebles(f: Filtros) {
   if (f.areaMax) q.set('area_max', f.areaMax)
   return get<InmuebleCollection>(`/inmuebles?${q}`)
 }
+
+export const getFichaAmpliada = (id: number) => get<FichaPublica>(`/inmuebles/${id}/ficha`)
 
 export const getPredio = (numeroPredial: string) => get<Predio>(`/predios/${encodeURIComponent(numeroPredial)}`)
 

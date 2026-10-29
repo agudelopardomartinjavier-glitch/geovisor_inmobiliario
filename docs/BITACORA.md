@@ -99,3 +99,27 @@
 - Frontend: `ZonaSelector` (buscador con sugerencias sin distinguir tildes ni mayúsculas, Enter, flechas, barrios con más ofertas), `OfertasZona` (franja de tarjetas con filtro Venta/Arriendo y orden), contorno resaltado, popup con barrio y «/ mes» en arriendos, enlaces `?barrio=` y `?vereda=`.
 - Verificado en el navegador: elegir «El Centro» lleva el mapa, resalta el barrio, deja 2 marcadores y 2 tarjetas; la tarjeta abre la ficha; buscar «alb» + Enter selecciona La Alborada; «Arriendo» filtra; el enlace `?barrio=popular` funciona. Vista móvil: la franja se ve bien, pero el mapa no se pintó en la emulación (limitación de la ventana de prueba).
 - Limitación: los nombres de barrios vienen sin tildes en la fuente («ASOCIACION DE AMIGOS»).
+
+## 2026-10-29 — Ampliación inmobiliaria, Fase 1: ficha ampliada + semáforo jurídico-ambiental
+- Migraciones versionadas (`scripts/migrar.py`, `db/migraciones/`): admin 001 (ficha, jurídico, soportes, semáforo) y 002 (parámetros); publico 001 (ficha pública). Aplicadas a las bases reales con copia previa en `data/db/respaldos/`.
+- Backend: `semaforo.py` (reglas puras), `semaforo_espacial.py` (cruce con capas), `entorno.py` (distancias), `admin/router_ficha.py`, `admin/sync.py` (sincronización compartida con los scripts), `GET /inmuebles/{id}/ficha` y campo `semaforo` en `/inmuebles`.
+- Frontend: panel «Ficha, jurídico y semáforo» en `/admin`; «Ver ficha ampliada» y semáforo en el popup del visor.
+- Pruebas: 29 (reglas del semáforo, migraciones, sincronización sin fugas, API de punta a punta sobre copias).
+- Semáforo calculado sobre los 57 inmuebles existentes: 9 rojos (predios en zonas de protección) y 48 amarillos (jurídico sin diligenciar).
+- Seguridad: `admin.sqlite` estaba versionado en git; se saca del seguimiento y se ignora junto con respaldos y soportes.
+- NO verificado: el panel y el popup en el navegador (solo compilación TypeScript y build de Vite); `scripts/crear_db.py` con las migraciones integradas (necesita el Python de QGIS y regenera `publico.gpkg`).
+
+## 2026-10-29 — Ampliación inmobiliaria, Fase 2: valoración
+- Migración admin 003: `precio_historial`, `avaluo_historial`, `estado_historial` (llenados por triggers, con relleno inicial de los datos existentes) e `inmueble_inversion`; 5 parámetros nuevos. Aplicada a la base real con copia previa.
+- Backend: `mercado.py` (cálculos puros), `admin/router_mercado.py` (historial, precios/avalúos manuales, `GET /admin/mercado/m2`, rentabilidad) e indicador de precio en `/valoracion`. Corregido: en arriendos ya no se compara el canon mensual con el valor de venta.
+- Frontend: `HistorialPanel` (tiempo en el mercado, rebajas, $/m² vs sector, gráfico `LineaTiempo` en SVG con tooltip y vista de tabla, rentabilidad), `CalorControl` + capa de calor en `AdminMap`, indicador en `ValoracionPanel`.
+- Pruebas: 63 en total (cálculos puros, triggers y relleno de migración, API de punta a punta sobre copias).
+- Verificado visualmente solo el gráfico de línea (captura con datos de ejemplo). NO verificado en el navegador: el resto del panel y el mapa de calor sobre el mapa real.
+
+## 2026-10-29 — Ampliación inmobiliaria, Fase 3: contabilidad y administración
+- Migración admin 004: personas, propietario por inmueble, consecutivos, IPC, contratos y codeudores, comisiones, facturas/notas crédito, cobros, recibos de caja, paz y salvos, gastos y liquidaciones; 17 parámetros nuevos. Aplicada a la base real con copia previa. Los registros contables usan `ON DELETE RESTRICT`.
+- Backend (`backend/app/contable/`): `calculos.py` (puro), `dian.py` (adaptador), `router_terceros|comisiones|arriendos|cuentas.py`, `excel.py`, PDF en `pdf/contable.py`.
+- Frontend: vista «Contabilidad» (carga aparte) con 9 secciones.
+- Corregido durante las pruebas: un prefijo ya usado podía reiniciar la numeración y repetir números; periodos/fechas imposibles (`2026-13`, `2026-02-30`) daban error 500 y ahora dan 422.
+- Pruebas: 138 (44 de cálculos con números verificados a mano; escenario de punta a punta con corte 2026-10-29).
+- Verificado visualmente (captura con datos de ejemplo sobre copias): Hoy, Comisiones y Contratos. NO revisado en pantalla: Cartera, Gastos, Cuentas del propietario, Reportes, Personas y Configuración, ni los flujos con clics (facturar, registrar pagos, cerrar liquidación).

@@ -7,6 +7,8 @@ from fastapi import APIRouter, HTTPException, Query, Response
 from shapely.geometry import Point
 
 from ..geo import a_4326, a_9377
+from .. import mercado
+from . import parametros as par
 from . import valoracion as val
 from .db import auditar, conexion
 from .router import Admin, _punto_predio
@@ -153,7 +155,10 @@ def _calcular(con, inm: sqlite3.Row) -> tuple[dict, list[sqlite3.Row]]:
     est = r["valor_estimado"]
     r["precio_publicado"] = inm["precio"]
     r["avaluo_registrado"] = inm["avaluo"]
-    r["dif_precio_pct"] = round(100 * (inm["precio"] - est) / est, 1) if est and inm["precio"] else None
+    venta = inm["operacion"] == "venta"      # en arriendo `precio` es un canon mensual: no se compara con un valor de venta
+    r["dif_precio_pct"] = round(100 * (inm["precio"] - est) / est, 1) if est and inm["precio"] and venta else None
+    tol = par.numero(par.todos(con), "valoracion.tolerancia_pct")
+    r["indicador"] = mercado.indicador_precio(inm["precio"], est, r["n"], r["cv_ok"], tol) if venta else         {"clasificacion": "no_aplica", "dif_pct": None, "confianza": None, "tolerancia_pct": tol}
     r["dif_avaluo_pct"] = round(100 * (inm["avaluo"] - est) / est, 1) if est and inm["avaluo"] else None
     return r, filas
 

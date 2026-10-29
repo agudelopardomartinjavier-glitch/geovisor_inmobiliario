@@ -3,6 +3,7 @@ import Map, { Layer, Marker, NavigationControl, ScaleControl, Source, type MapLa
 import type { StyleSpecification } from 'maplibre-gl'
 import type { Capa } from '../lib/types'
 import { CENTRO_INICIAL, MAPAS_BASE } from '../lib/mapa'
+import { RAMPA_CALOR } from './CalorControl'
 import { COLOR_COMPARABLE, COLOR_ESTADO, type Comparable, type InmuebleAdmin } from './tipos'
 
 const ESTILO: StyleSpecification = { version: 8, sources: {}, layers: [{ id: 'fondo', type: 'background', paint: { 'background-color': '#e5e7eb' } }] }
@@ -12,6 +13,8 @@ interface Props {
   predios: Capa | undefined
   inmuebles: InmuebleAdmin[]
   comparables: Comparable[]
+  /** Celdas del mapa de calor de valor por m² (propiedad `rel` 0–1) o null. */
+  calor: GeoJSON.FeatureCollection | null
   /** Comparables vinculados al inmueble que se está editando (se resaltan). */
   vinculados: Set<number>
   seleccionado: number | null
@@ -25,7 +28,7 @@ interface Props {
   onUbicar: (lon: number, lat: number, numeroPredial: string | null) => void
 }
 
-export default function AdminMap({ mapRef, predios, inmuebles, comparables, vinculados, seleccionado, compSeleccionado, punto, colorPunto, editando, onSeleccionar, onSeleccionarComparable, onUbicar }: Props) {
+export default function AdminMap({ mapRef, predios, inmuebles, comparables, calor, vinculados, seleccionado, compSeleccionado, punto, colorPunto, editando, onSeleccionar, onSeleccionarComparable, onUbicar }: Props) {
   const geoInmuebles = useMemo(
     () => ({
       type: 'FeatureCollection' as const,
@@ -75,6 +78,12 @@ export default function AdminMap({ mapRef, predios, inmuebles, comparables, vinc
       <Source id="adm-base" type="raster" tiles={MAPAS_BASE[0].tiles} tileSize={256} maxzoom={MAPAS_BASE[0].maxzoom} attribution={MAPAS_BASE[0].attribution}>
         <Layer id="adm-base" type="raster" />
       </Source>
+
+      {calor && (
+        <Source id="adm-calor" type="geojson" data={calor}>
+          <Layer id="adm-calor" type="fill" paint={{ 'fill-color': ['interpolate', ['linear'], ['get', 'rel'], ...RAMPA_CALOR.flat()] as never, 'fill-opacity': 0.72, 'fill-antialias': false }} />
+        </Source>
+      )}
 
       {predios && (
         <Source id="adm-src-predios" type="vector" tiles={[predios.tiles!]} minzoom={predios.minzoom} maxzoom={predios.maxzoom}>

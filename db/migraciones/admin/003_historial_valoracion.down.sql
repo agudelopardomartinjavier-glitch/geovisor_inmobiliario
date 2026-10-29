@@ -1,0 +1,11 @@
+DELETE FROM parametros WHERE clave IN ('valoracion.tolerancia_pct','mercado.celda_m','mercado.radio_influencia_m','mercado.min_vecinos','mercado.recorte_percentil');
+DROP TRIGGER IF EXISTS inmuebles_estado_au;
+DROP TRIGGER IF EXISTS inmuebles_estado_ai;
+DROP TRIGGER IF EXISTS inmuebles_avaluo_au;
+DROP TRIGGER IF EXISTS inmuebles_avaluo_ai;
+DROP TRIGGER IF EXISTS inmuebles_precio_au;
+DROP TRIGGER IF EXISTS inmuebles_precio_ai;
+DROP TABLE IF EXISTS inmueble_inversion;
+DROP TABLE IF EXISTS estado_historial;
+DROP TABLE IF EXISTS avaluo_historial;
+DROP TABLE IF EXISTS precio_historial;

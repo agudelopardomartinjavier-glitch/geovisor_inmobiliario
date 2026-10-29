@@ -9,6 +9,12 @@ interface Props {
   onNuevoComparable: () => void
 }
 
+const INDICADOR = {
+  por_debajo: { icono: '▼', texto: 'Precio por debajo del valor estimado' },
+  en_rango: { icono: '●', texto: 'Precio en rango del valor estimado' },
+  por_encima: { icono: '▲', texto: 'Precio por encima del valor estimado' },
+} as const
+
 const pct = (n: number | null) => (n == null ? '—' : `${n > 0 ? '+' : ''}${fmtNum(n, 1)} %`)
 
 function FilaVinculo({ v, onGuardar, onQuitar }: { v: Vinculo; onGuardar: (aj: number, inc: boolean) => void; onQuitar: () => void }) {
@@ -92,6 +98,13 @@ export default function ValoracionPanel({ inmuebleId, onNuevoComparable }: Props
             {r.precio_publicado != null && (<><dt>Precio publicado</dt><dd className="text-right">{fmtCOP(r.precio_publicado)} <span className="text-gray-500">({pct(r.dif_precio_pct)})</span></dd></>)}
             {r.avaluo_registrado != null && (<><dt>Avalúo registrado</dt><dd className="text-right">{fmtCOP(r.avaluo_registrado)} <span className="text-gray-500">({pct(r.dif_avaluo_pct)})</span></dd></>)}
           </dl>
+          {r.indicador && r.indicador.clasificacion in INDICADOR && (
+            <div className="rounded border border-violet-200 bg-white p-2 text-xs">
+              <b>{INDICADOR[r.indicador.clasificacion as keyof typeof INDICADOR].icono} {INDICADOR[r.indicador.clasificacion as keyof typeof INDICADOR].texto}</b>
+              {' '}({pct(r.indicador.dif_pct)}; margen ±{r.indicador.tolerancia_pct} %). Confianza {r.indicador.confianza}
+              {r.indicador.confianza === 'baja' && ' — menos de 3 comparables'}.
+            </div>
+          )}
           {r.avisos.map((a) => <p key={a} className="rounded bg-amber-50 p-1.5 text-xs text-amber-800">⚠ {a}</p>)}
           <p className="text-[11px] text-gray-500">Estimación de apoyo: promedio de valores unitarios ajustados × área. Revísala con criterio profesional antes de usarla.</p>
         </div>

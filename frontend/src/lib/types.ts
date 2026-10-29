@@ -19,6 +19,53 @@ export interface InmuebleProps {
   fecha_publicacion: string | null
   barrio: string | null
   vereda: string | null
+  semaforo?: ColorSemaforo | null
+}
+
+export type ColorSemaforo = 'verde' | 'amarillo' | 'rojo'
+
+export interface Entorno {
+  via_principal_m: number | null
+  colegio_m: number | null
+  parque_m: number | null
+  centro_salud_m: number | null
+  casco_urbano_m: number | null
+  drenaje_m: number | null
+  nacimiento_m: number | null
+}
+
+/** Ficha ampliada pública. El semáforo trae solo color y resumen; el detalle es privado. */
+export interface FichaPublica {
+  inmueble_id: number
+  estrato: number | null
+  antiguedad_anos: number | null
+  estado_conservacion: string | null
+  pisos: number | null
+  parqueaderos: number | null
+  deposito: boolean | null
+  acabados: string | null
+  orientacion: string | null
+  agua: boolean | null
+  alcantarillado: boolean | null
+  gas: boolean | null
+  energia: boolean | null
+  internet: boolean | null
+  fuentes_agua: string | null
+  tipo_suelo: string | null
+  vocacion: string | null
+  cultivos: string | null
+  mejoras: string | null
+  via_acceso: string | null
+  video_url: string | null
+  recorrido_360_url: string | null
+  plano_url: string | null
+  negociable: boolean | null
+  permuta: boolean | null
+  financiacion: boolean | null
+  administracion_mensual: number | null
+  disponible_desde: string | null
+  entorno: Partial<Entorno>
+  semaforo: { color: ColorSemaforo; resumen: string } | null
 }
 
 export interface InmuebleFeature {

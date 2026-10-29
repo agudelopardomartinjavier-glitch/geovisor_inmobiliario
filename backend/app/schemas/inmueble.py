@@ -22,6 +22,54 @@ class InmuebleProps(BaseModel):
     fecha_publicacion: Optional[str] = None
     barrio: Optional[str] = None
     vereda: Optional[str] = None
+    semaforo: Optional[Literal["verde", "amarillo", "rojo"]] = Field(default=None, description="Color del semáforo jurídico-ambiental (solo el color)")
+
+class Semaforo(BaseModel):
+    """Lo único público del semáforo: color y resumen genérico. El detalle es privado."""
+    color: Literal["verde", "amarillo", "rojo"]
+    resumen: str
+
+class Entorno(BaseModel):
+    """Distancias en metros calculadas con las capas del POT; null = sin dato."""
+    via_principal_m: Optional[int] = None
+    colegio_m: Optional[int] = None
+    parque_m: Optional[int] = None
+    centro_salud_m: Optional[int] = None
+    casco_urbano_m: Optional[int] = None
+    drenaje_m: Optional[int] = None
+    nacimiento_m: Optional[int] = None
+
+class FichaPublica(BaseModel):
+    inmueble_id: int
+    estrato: Optional[int] = None
+    antiguedad_anos: Optional[int] = None
+    estado_conservacion: Optional[str] = None
+    pisos: Optional[int] = None
+    parqueaderos: Optional[int] = None
+    deposito: Optional[bool] = None
+    acabados: Optional[str] = None
+    orientacion: Optional[str] = None
+    agua: Optional[bool] = None
+    alcantarillado: Optional[bool] = None
+    gas: Optional[bool] = None
+    energia: Optional[bool] = None
+    internet: Optional[bool] = None
+    fuentes_agua: Optional[str] = None
+    tipo_suelo: Optional[str] = None
+    vocacion: Optional[str] = None
+    cultivos: Optional[str] = None
+    mejoras: Optional[str] = None
+    via_acceso: Optional[str] = None
+    video_url: Optional[str] = None
+    recorrido_360_url: Optional[str] = None
+    plano_url: Optional[str] = None
+    negociable: Optional[bool] = None
+    permuta: Optional[bool] = None
+    financiacion: Optional[bool] = None
+    administracion_mensual: Optional[int] = None
+    disponible_desde: Optional[str] = None
+    entorno: Entorno = Field(default_factory=Entorno)
+    semaforo: Optional[Semaforo] = None
 
 class Point(BaseModel):
     type: Literal["Point"] = "Point"
