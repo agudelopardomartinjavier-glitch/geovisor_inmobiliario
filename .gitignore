@@ -1,0 +1,11 @@
+.env
+*.log
+__pycache__/
+node_modules/
+dist/
+.venv/
+_respaldos/
+tools/node/
+data/*.gpkg
+data/db/*.gpkg
+.claude/settings.local.json

@@ -1,0 +1,9 @@
+{
+"type": "FeatureCollection",
+"name": "cr_9_conflictos_uso",
+"xy_coordinate_resolution": 1e-06,
+"features": [
+{ "type": "Feature", "properties": { "codigo": "ACU", "convencion": "Área de conflicto de uso del suelo", "area_m2": 152209.99, "area_ha": 15.221 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -73.780805, 4.018583 ], [ -73.784215, 4.018394 ], [ -73.783364, 4.014497 ], [ -73.781186, 4.013545 ], [ -73.780805, 4.018583 ] ] ] } },
+{ "type": "Feature", "properties": { "codigo": "ACU", "convencion": "Área de conflicto de uso del suelo", "area_m2": 27816.58, "area_ha": 2.7817 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -73.642411, 3.916122 ], [ -73.642814, 3.916145 ], [ -73.642501, 3.914278 ], [ -73.641425, 3.914345 ], [ -73.641133, 3.915649 ], [ -73.642411, 3.916122 ] ] ] } }
+]
+}

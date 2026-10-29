@@ -1,0 +1,8 @@
+{
+"type": "FeatureCollection",
+"name": "cr_12_equipamientos_rurales",
+"xy_coordinate_resolution": 1e-06,
+"features": [
+{ "type": "Feature", "properties": { "codigo": "TER", "convencion": "Área para terminal de transportes", "area_m2": 968161.66, "area_ha": 96.8162 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -73.755535, 4.003781 ], [ -73.741994, 3.998503 ], [ -73.738812, 4.002711 ], [ -73.754176, 4.008711 ], [ -73.755535, 4.003781 ] ] ] } }
+]
+}

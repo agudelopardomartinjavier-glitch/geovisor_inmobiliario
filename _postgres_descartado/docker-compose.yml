@@ -1,0 +1,41 @@
+name: geovisor
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      API_PUBLICO_PASSWORD: ${API_PUBLICO_PASSWORD}
+      API_ADMIN_PASSWORD: ${API_ADMIN_PASSWORD}
+      MARTIN_RO_PASSWORD: ${MARTIN_RO_PASSWORD}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db:/sql:ro
+      - ./db/init.sh:/docker-entrypoint-initdb.d/10_init.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  martin:
+    image: ghcr.io/maplibre/martin:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      MARTIN_DATABASE_URL: postgresql://martin_ro:${MARTIN_RO_PASSWORD}@db:5432/${POSTGRES_DB}
+    command: ["--config", "/config/martin.yaml"]
+    volumes:
+      - ./martin/martin.yaml:/config/martin.yaml:ro
+    ports:
+      - "${MARTIN_PORT:-3000}:3000"
+
+volumes:
+  pgdata:

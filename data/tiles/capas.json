@@ -1,0 +1,284 @@
+{
+ "predios": {
+  "formato": "mvt",
+  "minzoom": 12,
+  "maxzoom": 16,
+  "vertices": 452192
+ },
+ "cg_2_clasificacion_suelo": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 33981
+ },
+ "cg_3_nacimientos": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 332
+ },
+ "cg_3_proteccion_hidrica": {
+  "formato": "mvt",
+  "minzoom": 0,
+  "maxzoom": 15,
+  "vertices": 269375
+ },
+ "cg_4_vias_integracion_regional": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 772
+ },
+ "cg_5_unidades_planeamiento": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 6202
+ },
+ "cg_6_acueducto_a_desarrollar": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 194
+ },
+ "cr_11_red_vial": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 3770
+ },
+ "cr_12_equipamientos_rurales": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 5
+ },
+ "cr_13_acueducto_rural": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 199
+ },
+ "cr_2_areas_manejo_especial": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 1204
+ },
+ "cr_2_veredas": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 9956
+ },
+ "cr_5_destinacion_especifica": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 23979
+ },
+ "cr_5_usos_suelo": {
+  "formato": "mvt",
+  "minzoom": 0,
+  "maxzoom": 15,
+  "vertices": 347025
+ },
+ "cr_9_conflictos_uso": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 11
+ },
+ "cu_10_espacio_publico": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 2377
+ },
+ "cu_11_equipamientos": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 573
+ },
+ "cu_12_proteccion": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 1995
+ },
+ "cu_12_sistema_vial": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 13255
+ },
+ "cu_13_amenazas": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 1525
+ },
+ "cu_15_acueducto": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 693
+ },
+ "cu_16_alcantarillado": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 543
+ },
+ "cu_17_alcantarillado_pluvial": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 550
+ },
+ "cu_1_drenaje": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 7285
+ },
+ "cu_1_manzanas": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 8879
+ },
+ "cu_1_numero_barrio": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 97
+ },
+ "cu_1_perimetros": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 1016
+ },
+ "cu_1_puntos_perimetro": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 341
+ },
+ "cu_2_perimetros": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 1041
+ },
+ "cu_3_barrios": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 1622
+ },
+ "cu_4_upz": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 736
+ },
+ "cu_5_eep_urbana": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 2264
+ },
+ "cu_6_tratamientos": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 2817
+ },
+ "cu_7_usos_del_suelo": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 1592
+ },
+ "cu_8_conflictos_uso": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 422
+ },
+ "cu_9_densidades": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 3759
+ },
+ "gen_areas_especiales": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 1893
+ },
+ "gen_coordenadas": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 45
+ },
+ "gen_coordenadas_rotulos": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 14
+ },
+ "gen_escuelas": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 10570
+ },
+ "gen_escuelas_puntos": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 35
+ },
+ "gen_hidrografia_lineas": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 42021
+ },
+ "gen_humedales": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 787
+ },
+ "gen_limites": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 30908
+ },
+ "gen_vias": {
+  "formato": "geojson",
+  "minzoom": 0,
+  "maxzoom": 18,
+  "vertices": 658
+ },
+ "pomca_acacias_pajure": {
+  "formato": "mvt",
+  "minzoom": 0,
+  "maxzoom": 15,
+  "vertices": 412620
+ },
+ "pomca_guayuriba": {
+  "formato": "mvt",
+  "minzoom": 0,
+  "maxzoom": 15,
+  "vertices": 3350338
+ }
+}

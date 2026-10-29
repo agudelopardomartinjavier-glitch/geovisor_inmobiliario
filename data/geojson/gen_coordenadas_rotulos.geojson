@@ -1,0 +1,21 @@
+{
+"type": "FeatureCollection",
+"name": "gen_coordenadas_rotulos",
+"xy_coordinate_resolution": 1e-06,
+"features": [
+{ "type": "Feature", "properties": { "texto": "1040000 m.E." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -73.718393, 3.839615 ] ] } },
+{ "type": "Feature", "properties": { "texto": "1000000 m.E." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -74.079573, 3.807723 ] ] } },
+{ "type": "Feature", "properties": { "texto": "1010000 m.E." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -73.989544, 3.807718 ] ] } },
+{ "type": "Feature", "properties": { "texto": "1020000 m.E." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -73.899515, 3.807704 ] ] } },
+{ "type": "Feature", "properties": { "texto": "1030000 m.E." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -73.809487, 3.807681 ] ] } },
+{ "type": "Feature", "properties": { "texto": "1050000 m.E." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -73.629432, 3.807606 ] ] } },
+{ "type": "Feature", "properties": { "texto": "1060000 m.E." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -73.539407, 3.807554 ] ] } },
+{ "type": "Feature", "properties": { "texto": "1070000 m.E." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -73.449383, 3.807493 ] ] } },
+{ "type": "Feature", "properties": { "texto": "1080000 m.E." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -73.35936, 3.807422 ] ] } },
+{ "type": "Feature", "properties": { "texto": "960000 m.N." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -73.325598, 4.235809 ] ] } },
+{ "type": "Feature", "properties": { "texto": "950000 m.N." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -73.325684, 4.145385 ] ] } },
+{ "type": "Feature", "properties": { "texto": "940000 m.N." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -73.325769, 4.054961 ] ] } },
+{ "type": "Feature", "properties": { "texto": "930000 m.N." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -73.325607, 3.964532 ] ] } },
+{ "type": "Feature", "properties": { "texto": "920000 m.N." }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -73.325688, 3.874107 ] ] } }
+]
+}

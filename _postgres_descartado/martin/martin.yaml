@@ -1,0 +1,9 @@
+listen_addresses: '0.0.0.0:3000'
+postgres:
+  connection_string: '${MARTIN_DATABASE_URL}'
+  # Solo capas no sensibles: POT, POMCA y las vistas públicas (predios sin datos internos, inmuebles publicados).
+  auto_publish:
+    from_schemas: [pot, ambiental, vista_publica]
+    tables:
+      source_id_format: '{table}'
+    functions: false

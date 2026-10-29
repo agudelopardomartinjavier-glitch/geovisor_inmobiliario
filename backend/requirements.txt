@@ -1,0 +1,8 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+sqlalchemy>=2.0
+geoalchemy2>=0.15
+pydantic>=2.7
+pyproj>=3.6
+shapely>=2.0
+reportlab>=4.0   # ya viene con el Python de QGIS

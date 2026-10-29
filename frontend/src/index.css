@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+html, body, #root { height: 100%; margin: 0; }
+body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #1f2937; }
+.maplibregl-popup-content { padding: 0; border-radius: 10px; overflow: hidden; }
+.maplibregl-popup-close-button { font-size: 20px; padding: 2px 8px; z-index: 2; color: #fff; text-shadow: 0 0 3px #000; }
+
+/* ---- acabado visual ---- */
+* { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+button, input, select, textarea { font-family: inherit; }
+:focus-visible { outline: 2px solid #059669; outline-offset: 2px; }
+.maplibregl-ctrl-group { border-radius: 12px !important; box-shadow: 0 4px 14px rgb(0 0 0 / .25) !important; overflow: hidden; }
+.maplibregl-ctrl-scale { border-radius: 4px; font-weight: 600; background: rgb(255 255 255 / .85); }
+.maplibregl-popup-content { border-radius: 16px !important; box-shadow: 0 12px 32px rgb(0 0 0 / .35) !important; }
+.maplibregl-popup-tip { filter: drop-shadow(0 2px 2px rgb(0 0 0 / .2)); }
+.bg-white\/92 { background-color: rgb(255 255 255 / .92); }
