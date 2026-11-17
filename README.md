@@ -48,8 +48,8 @@ Solo administrador (pestaña «Comparables» y sección «Valoración por compar
 - Las fotos se descargan para el PDF solo desde `http(s)` hacia IPs públicas, máx. 3 MB y JPEG/PNG (no se acepta `localhost`, redes privadas ni `file://`); si una foto falla, el PDF sale sin ella.
 
 ## Ofertas por barrio y datos de demostración
-- **Visor:** tarjeta «Ofertas por barrio» (escribe «el centro», «alborada»… o toca un barrio sugerido): el mapa vuela al barrio, resalta su contorno,
-  muestra solo sus ofertas y abre una franja inferior con las tarjetas (filtro Venta/Arriendo y orden por precio). Enlaces directos: `/?barrio=el%20centro`, `/?vereda=Dinamarca`.
+- **Visor:** buscador único (escribe «el centro», «alborada»… o un número predial) y atajos «Ofertas por barrio»: el mapa vuela al barrio, resalta su contorno
+  y la lista del panel muestra solo sus ofertas (filtro Venta/Arriendo y orden por precio o fecha). Enlaces directos: `/?barrio=el%20centro`, `/?vereda=Dinamarca`.
 - **API:** `GET /zonas` (barrios y veredas con n.º de ofertas), `GET /zonas/{barrio|vereda}/{nombre}` (contorno), `GET /inmuebles?barrio=…` / `?vereda=…`.
 - **Inmuebles de demostración inventados** (precios y datos ficticios sobre predios reales; marcados «DEMO» en las notas internas):
   `python scripts\sembrar_demo.py` los crea (repetible) y `python scripts\sembrar_demo.py --borrar` los quita todos. Las 15 fotos de ejemplo salen de `scripts\generar_fotos_demo.py` (`/fotos`).

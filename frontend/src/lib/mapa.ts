@@ -60,7 +60,28 @@ export const fmtCOP = (n: number | null) =>
 export const fmtNum = (n: number | null, dec = 0) =>
   n == null ? '—' : new Intl.NumberFormat('es-CO', { maximumFractionDigits: dec }).format(n)
 
-/** «LA PRIMAVERA II ETAPA» → «La Primavera II Etapa»; «ASOCIACION DE AMIGOS» → «Asociacion de Amigos». */
+/** Precio abreviado para etiquetas del mapa: 350000000 → «$350 M»; 1200000 → «$1,2 M»; 850000 → «$850 mil». */
+export function fmtCorto(n: number | null): string {
+  if (n == null) return 'Consultar'
+  if (n >= 1e6) return `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: n >= 1e7 ? 0 : 1 }).format(n / 1e6)} M`
+  return `$${new Intl.NumberFormat('es-CO', { maximumFractionDigits: 0 }).format(n / 1e3)} mil`
+}
+
+/** Coordenada en grados, minutos y segundos, como en el margen de una plancha: 3°59′24″ N. */
+export function fmtGMS(valor: number, eje: 'lat' | 'lon'): string {
+  const total = Math.round(Math.abs(valor) * 3600)
+  const p = (x: number) => String(x).padStart(2, '0')
+  const letra = eje === 'lat' ? (valor >= 0 ? 'N' : 'S') : valor >= 0 ? 'E' : 'O'
+  return `${Math.floor(total / 3600)}°${p(Math.floor((total % 3600) / 60))}′${p(total % 60)}″ ${letra}`
+}
+
+export const NOMBRE_TIPO = { casa: 'Casa', lote: 'Lote', finca: 'Finca', local: 'Local', apartamento: 'Apartamento' } as const
+
+/** «Barrio El Centro» / «Vereda Dinamarca» a partir de los datos del inmueble. */
+export const lugarDe = (p: { barrio: string | null; vereda: string | null }) =>
+  p.barrio ? `Barrio ${bonito(p.barrio)}` : p.vereda ? `Vereda ${bonito(p.vereda)}` : null
+
+/** «LA PRIMAVERA II ETAPA» →«La Primavera II Etapa»; «ASOCIACION DE AMIGOS» → «Asociacion de Amigos». */
 export const bonito = (s: string) =>
   s.toLowerCase().split(/(\s+)/).map((w, i) => {
     if (/^(i{1,3}|iv|v|vi{0,3})$/.test(w)) return w.toUpperCase()

@@ -1,16 +1,115 @@
 @import "tailwindcss";
+@import "@fontsource-variable/hanken-grotesk/wght.css";
+@import "@fontsource/ibm-plex-mono/latin-400.css";
+@import "@fontsource/ibm-plex-mono/latin-500.css";
 
+/* Sistema visual del visor: plano catastral impreso. Papel, tinta, líneas finas y un resaltador para lo seleccionado. */
+@theme {
+  --font-sans: "Hanken Grotesk Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+
+  --color-papel: #f4f3ee;      /* fondo de paneles */
+  --color-hoja: #fdfdfb;       /* superficies elevadas: tarjetas, campos */
+  --color-tinta: #14211b;      /* texto y acción principal */
+  --color-tinta-2: #47534d;    /* texto secundario */
+  --color-tinta-3: #66716b;    /* texto de apoyo (≥4.5:1 sobre papel) */
+  --color-linea: #dddbd1;
+  --color-linea-2: #c4c2b6;
+  --color-marca: #c8f04f;      /* resaltador: selección y estado activo, siempre con texto tinta */
+  --color-marca-2: #b4dd36;
+  --color-venta: #d2362a;
+  --color-arriendo: #2a62d8;
+  --color-alerta: #b3261e;
+
+  --shadow-flota: 0 1px 2px rgb(20 33 27 / .14), 0 8px 24px -6px rgb(20 33 27 / .32);
+  --shadow-panel: 0 2px 6px rgb(20 33 27 / .12), 0 22px 48px -12px rgb(20 33 27 / .4);
+
+  --ease-salida: cubic-bezier(.16, 1, .3, 1);
+}
+
+@layer base {
 html, body, #root { height: 100%; margin: 0; }
-body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #1f2937; }
-.maplibregl-popup-content { padding: 0; border-radius: 10px; overflow: hidden; }
-.maplibregl-popup-close-button { font-size: 20px; padding: 2px 8px; z-index: 2; color: #fff; text-shadow: 0 0 3px #000; }
-
-/* ---- acabado visual ---- */
-* { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+body {
+  font-family: var(--font-sans);
+  color: var(--color-tinta);
+  background: var(--color-papel);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
 button, input, select, textarea { font-family: inherit; }
-:focus-visible { outline: 2px solid #059669; outline-offset: 2px; }
-.maplibregl-ctrl-group { border-radius: 12px !important; box-shadow: 0 4px 14px rgb(0 0 0 / .25) !important; overflow: hidden; }
-.maplibregl-ctrl-scale { border-radius: 4px; font-weight: 600; background: rgb(255 255 255 / .85); }
-.maplibregl-popup-content { border-radius: 16px !important; box-shadow: 0 12px 32px rgb(0 0 0 / .35) !important; }
-.maplibregl-popup-tip { filter: drop-shadow(0 2px 2px rgb(0 0 0 / .2)); }
-.bg-white\/92 { background-color: rgb(255 255 255 / .92); }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+
+/* superficies del navegador */
+* { scrollbar-width: thin; scrollbar-color: var(--color-linea-2) transparent; }
+::selection { background: var(--color-marca); color: var(--color-tinta); }
+input, textarea { caret-color: var(--color-tinta); }
+:focus-visible { outline: 2px solid var(--color-tinta); outline-offset: 2px; border-radius: 4px; }
+.sobre-oscuro :focus-visible, .sobre-oscuro:focus-visible { outline-color: var(--color-marca); }
+input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+}
+.cifras { font-variant-numeric: tabular-nums; }
+
+/* ---- visor ---- */
+.visor { overscroll-behavior: none; }
+.visor .maplibregl-map { font-family: var(--font-sans); }
+.visor .maplibregl-ctrl-scale {
+  border: 0; border-bottom: 2px solid var(--color-tinta); border-radius: 0;
+  background: rgb(253 253 251 / .9); color: var(--color-tinta);
+  font: 500 10.5px/1.5 var(--font-mono); padding: 1px 6px;
+}
+.visor .maplibregl-ctrl-attrib { background: rgb(253 253 251 / .82); font-size: 10.5px; color: var(--color-tinta-2); }
+.visor .maplibregl-ctrl-attrib a { color: inherit; }
+/* el botón de ubicación propio dispara este control, que queda oculto */
+.visor .maplibregl-ctrl-top-left { display: none; }
+@media (max-width: 767px) {
+  .visor .maplibregl-ctrl-bottom-right, .visor .maplibregl-ctrl-bottom-left { bottom: 4.5rem; }
+}
+
+/* marcador de inmueble: etiqueta de precio (o punto, en vista alejada) */
+.pin {
+  position: relative; display: flex; align-items: center; gap: 5px;
+  padding: 3px 8px 3px 6px; border-radius: 6px;
+  background: var(--color-hoja); color: var(--color-tinta);
+  border: 1px solid rgb(20 33 27 / .28);
+  font: 650 12px/1.3 var(--font-sans); font-variant-numeric: tabular-nums; white-space: nowrap;
+  box-shadow: var(--shadow-flota);
+  transition: transform .18s var(--ease-salida), background-color .15s, color .15s;
+  transform-origin: 50% 100%;
+}
+.pin::after {
+  content: ""; position: absolute; left: 50%; bottom: -5px; width: 8px; height: 8px;
+  background: inherit; border: inherit; border-top: 0; border-left: 0;
+  transform: translateX(-50%) rotate(45deg);
+}
+.pin i { width: 8px; height: 8px; border-radius: 50%; background: var(--op); flex: none; }
+.pin:hover, .pin[data-estado="sobre"] { background: var(--color-tinta); color: var(--color-hoja); transform: scale(1.06); }
+.pin[data-estado="activo"] { background: var(--color-marca); color: var(--color-tinta); border-color: var(--color-tinta); transform: scale(1.12); }
+.pin[data-compacto] {
+  padding: 0; width: 15px; height: 15px; border-radius: 50%;
+  background: var(--op); border: 2px solid var(--color-hoja); transform-origin: 50% 50%;
+}
+.pin[data-compacto]::after, .pin[data-compacto] i { display: none; }
+.pin[data-compacto]:hover, .pin[data-compacto][data-estado="sobre"] { background: var(--op); transform: scale(1.35); }
+.pin[data-compacto][data-estado="activo"] { background: var(--color-marca); border-color: var(--color-tinta); transform: scale(1.5); }
+
+/* movimiento: solo cambios de estado */
+@keyframes entra-vista { from { opacity: 0; transform: translateY(6px); } }
+@keyframes entra-lado { from { opacity: 0; transform: translateX(14px); } }
+@keyframes entra-abajo { from { transform: translateY(100%); } }
+@keyframes entra-menu { from { opacity: 0; transform: translateY(-4px) scale(.985); } }
+@keyframes brillo { to { background-position: -200% 0; } }
+@keyframes avance { from { transform: translateX(-100%); } to { transform: translateX(350%); } }
+@utility entra-vista { animation: entra-vista .24s var(--ease-salida) both; }
+@utility entra-lado { animation: entra-lado .28s var(--ease-salida) both; }
+@utility entra-abajo { animation: entra-abajo .32s var(--ease-salida) both; }
+@utility entra-menu { animation: entra-menu .16s var(--ease-salida) both; transform-origin: 50% 0; }
+.esqueleto {
+  background: linear-gradient(90deg, var(--color-linea) 0%, #ebe9e1 50%, var(--color-linea) 100%) 0 0 / 200% 100%;
+  animation: brillo 1.3s linear infinite; border-radius: 4px;
+}
+.avance { animation: avance 1.1s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
